@@ -2,21 +2,16 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ config, pkgs, lib, ... }:
+
 
 {
-  imports = [
-    # Include the results of the hardware scan.
-    <nixpkgs/nixos/modules/virtualisation/openstack-config.nix>
-    #<nixpkgs/nixos/modules/virtualisation/amazon-image.nix>
-    # include more configs
-    # https://github.com/NixOS/nixpkgs/tree/master/nixos/modules/virtualisation
-  ];
+  imports =
+    [
+      # Include the results of the hardware scan.
+      <nixpkgs/nixos/modules/virtualisation/openstack-config.nix>
+      # include more configs
+    ];
 
   # copy the configuration.nix into /run/current-system/configuration.nix
   system.copySystemConfiguration = true;
@@ -34,12 +29,11 @@
   };
 
   # Enable latest kernel updates
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   environment.systemPackages = with pkgs; [
     # System utilities
     btop
-    git
     gnupg
     nano
     vim
@@ -59,12 +53,10 @@
       enable = true;
       allowPing = true;
       # Port 22 is already open through setting openFirewall = true;
-      allowedTCPPorts = [
-        80
-        443
-      ];
+      allowedTCPPorts = [ 80 443 ];
     };
   };
+
 
   # List services that you want to enable:
 
@@ -111,6 +103,6 @@
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
-  system.stateVersion = "26.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 
 }

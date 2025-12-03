@@ -3,46 +3,54 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgsUnstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgsStable-old.url = "github:nixos/nixpkgs/nixos-25.05";
   };
 
-  outputs = { self , nixpkgs ,... }:
-  let
-    # system should match the system you are running on
-    system = "x86_64-linux";
-    # globally define packages
-    # https://discourse.nixos.org/t/using-nixpkgs-legacypackages-system-vs-import/17462/5
-    pkgs = import nixpkgs { inherit system; };
-  in
-  {
-    devShells."${system}" =
+  outputs =
     {
-      firstshell =
-        pkgs.mkShell {
-          # create an environment with multiple nodejs_, and yarn
-          packages = with pkgs; [
-            nodejs_18
-            nodejs_23
-            (yarn.override { nodejs = nodejs_23; })
-          ];
+      self,
+      nixpkgs,
+      nixpkgsUnstable,
+      nixpkgsStable-old,
+      ...
+    }:
+    let
+      system = "x86_64-linux";
 
-          shellHook = ''
-            echo "node `${pkgs.nodejs}/bin/node --version`"
-          '';
-        };
+      # import pkgs once, all in the same let
+      pkgs = import nixpkgs { inherit system; };
+      pkgsUnstable = import nixpkgsUnstable { inherit system; };
+      pkgsStable = import nixpkgsStable-old { inherit system; };
 
-      secondshell =
-        pkgs.mkShell {
-          # create an environment with multiple nodejs_, and yarn
-          packages = with pkgs; [
-            nodejs_18
-            nodejs_23
-            (yarn.override { nodejs = nodejs_23; })
-          ];
+      firstshell = pkgs.mkShell {
+        packages = with pkgsStable; [
+          nodejs_20
+          nodejs_22
+        ];
+        shellHook = ''
+          printf "stable node: `${pkgsStable.nodejs}/bin/node --version`"
+        '';
+      };
 
-          shellHook = ''
-            echo "node `${pkgs.nodejs_22}/bin/node --version`"
-          '';
-        };
+      secondshell = pkgs.mkShell {
+        packages = with pkgsUnstable; [
+          nodejs_22
+          nodejs_24
+          (yarn.override { nodejs = nodejs_20; })
+        ];
+        shellHook = ''
+          printf "unstable node: `${pkgsUnstable.nodejs}/bin/node --version`\n\n"
+          printf "yarn node unstable version: `${pkgsUnstable.yarn}/bin/yarn node --version` \n\n"
+          printf "yarn node overriden version: `yarn node --version`"
+        '';
+      };
+    in
+    {
+      devShells.${system} = {
+        default = firstshell;
+        firstshell = firstshell;
+        secondshell = secondshell;
+      };
     };
-  };
 }
