@@ -27,31 +27,33 @@
       pkgs-n00b-stable-bugged = import n00b-nixpkgs-stable-bugged { inherit system; };
       pkgs-n00b-stable-megaold = import n00b-nixpkgs-stable-megaold { inherit system; };
     in
-    pkgs.mkShell {
-      packages = [
-        pkgs.openssh
-        pkgs-n00b-stable.openssh
-        pkgs-n00b-stable-bugged.openssh
-        pkgs-n00b-stable-megaold.openssh
-      ];
+    {
+      devShells.${system}.default = pkgs.mkShell {
+        packages = [
+          pkgs.openssh
+          pkgs-n00b-stable.openssh
+          pkgs-n00b-stable-bugged.openssh
+          pkgs-n00b-stable-megaold.openssh
+        ];
 
-      shellHook = ''
-        printf "pkgs: \n"
-        printf "`${pkgs.openssh}/bin/ssh -V`"
-        printf "`which ${pkgs.openssh}/bin/ssh`"
-        printf "\n\n"
-        printf "pkgs-n00b-stable: \n"
-        printf "`${pkgs-n00b-stable.openssh}/bin/ssh -V`"
-        printf "`which ${pkgs-n00b-stable.openssh}/bin/ssh`"
-        printf "\n\n"
-        printf "pkgs-n00b-stable-bugged: \n"
-        printf "`${pkgs-n00b-stable-bugged.openssh}/bin/ssh -V`"
-        printf "`which ${pkgs-n00b-stable-bugged.openssh}/bin/ssh`"
-        printf "\n\n"
-        printf "pkgs-n00b-stable-μεγαold: \n"
-        printf "`${pkgs-n00b-stable-megaold.openssh}/bin/ssh -V`"
-        printf "`which ${pkgs-n00b-stable-megaold.openssh}/bin/ssh`"
-      '';
+        shellHook = ''
+          printf "pkgs: \n"
+          printf "`${pkgs.openssh}/bin/ssh -V`"
+          printf "`which ${pkgs.openssh}/bin/ssh`"
+          printf "\n\n"
+          printf "pkgs-n00b-stable: \n"
+          printf "`${pkgs-n00b-stable.openssh}/bin/ssh -V`"
+          printf "`which ${pkgs-n00b-stable.openssh}/bin/ssh`"
+          printf "\n\n"
+          printf "pkgs-n00b-stable-bugged: \n"
+          printf "`${pkgs-n00b-stable-bugged.openssh}/bin/ssh -V`"
+          printf "`which ${pkgs-n00b-stable-bugged.openssh}/bin/ssh`"
+          printf "\n\n"
+          printf "pkgs-n00b-stable-μεγαold: \n"
+          printf "`${pkgs-n00b-stable-megaold.openssh}/bin/ssh -V`"
+          printf "`which ${pkgs-n00b-stable-megaold.openssh}/bin/ssh`"
+        '';
+
+      };
     };
-
 }
