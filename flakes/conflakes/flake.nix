@@ -20,6 +20,8 @@
       nixosConfigurations = {
         uniza = nixpkgs.lib.nixosSystem {
           # ^ depends on hostname
+          # nixos-rebuild --flake /root/101/flakes/conflakes/.#uniza --impure switch
+          # ^ hostname agnostic, you can rename to uniza to whatever... or define more configurations
           system = "x86_64-linux";
           modules = [
             /etc/nixos/configuration.nix
