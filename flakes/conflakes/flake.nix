@@ -6,6 +6,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
+  # to both update flakes and upgrade run
+  # nix flake update --flake <pathtoflake> && sudo nixos-rebuild switch --flake <pathtoflake> (--impure) switch
+
   outputs =
     {
       self,
@@ -15,10 +18,16 @@
     }@inputs:
     {
       nixosConfigurations = {
-        nixos = nixpkgs.lib.nixosSystem {
+        uniza = nixpkgs.lib.nixosSystem {
+          # ^ depends on hostname
           system = "x86_64-linux";
           modules = [
             /etc/nixos/configuration.nix
+            # need to use --impure for /etc ^^^
+            # # nixos-rebuild --flake ~/101/flakes/conflakes/.#nixos --impure switch
+            #
+            # alternatively, copy out configuration.nix somewhere else and use that:
+            #/root/101/configuration/configuration.nix
           ];
         };
       };
