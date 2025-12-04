@@ -22,47 +22,36 @@
     let
       # system should match the system you are running on
       system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+      pkgs-n00b-stable = import n00b-nixpkgs-stable { inherit system; };
+      pkgs-n00b-stable-bugged = import n00b-nixpkgs-stable-bugged { inherit system; };
+      pkgs-n00b-stable-megaold = import n00b-nixpkgs-stable-megaold { inherit system; };
     in
-    {
-      inherit self; # nix eval .#self.
-      devShells."${system}".default =
-        let
-          pkgs = import nixpkgs { inherit system; };
-          pkgs-n00b-stable = import n00b-nixpkgs-stable { inherit system; };
-          pkgs-n00b-stable-bugged = import n00b-nixpkgs-stable-bugged { inherit system; };
-          pkgs-n00b-stable-megaold = import n00b-nixpkgs-stable-megaold { inherit system; };
+    pkgs.mkShell {
+      packages = [
+        pkgs.openssh
+        pkgs-n00b-stable.openssh
+        pkgs-n00b-stable-bugged.openssh
+        pkgs-n00b-stable-megaold.openssh
+      ];
 
-        in
-        pkgs.mkShell {
-          # create an environment with multiple nodejs_, pnpm, and yarn
-          packages = [
-            # with pkgs; [
-            pkgs.openssh
-            pkgs-n00b-stable.openssh
-            pkgs-n00b-stable-bugged.openssh
-            pkgs-n00b-stable-megaold.openssh
-
-            #(yarn.override { nodejs = nodejs_23; })
-          ];
-
-          shellHook = ''
-            #echo "node `${pkgs.nodejs}/bin/node --version`"
-            printf "pkgs: \n"
-            printf "`${pkgs.openssh}/bin/ssh -V`"
-            printf "`which ${pkgs.openssh}/bin/ssh`"
-            printf "\n\n"
-            printf "pkgs-n00b-stable: \n"
-            printf "`${pkgs-n00b-stable.openssh}/bin/ssh -V`"
-            printf "`which ${pkgs-n00b-stable.openssh}/bin/ssh`"
-            printf "\n\n"
-            printf "pkgs-n00b-stable-bugged: \n"
-            printf "`${pkgs-n00b-stable-bugged.openssh}/bin/ssh -V`"
-            printf "`which ${pkgs-n00b-stable-bugged.openssh}/bin/ssh`"
-            printf "\n\n"
-            printf "pkgs-n00b-stable-μεγαold: \n"
-            printf "`${pkgs-n00b-stable-megaold.openssh}/bin/ssh -V`"
-            printf "`which ${pkgs-n00b-stable-megaold.openssh}/bin/ssh`"
-          '';
-        };
+      shellHook = ''
+        printf "pkgs: \n"
+        printf "`${pkgs.openssh}/bin/ssh -V`"
+        printf "`which ${pkgs.openssh}/bin/ssh`"
+        printf "\n\n"
+        printf "pkgs-n00b-stable: \n"
+        printf "`${pkgs-n00b-stable.openssh}/bin/ssh -V`"
+        printf "`which ${pkgs-n00b-stable.openssh}/bin/ssh`"
+        printf "\n\n"
+        printf "pkgs-n00b-stable-bugged: \n"
+        printf "`${pkgs-n00b-stable-bugged.openssh}/bin/ssh -V`"
+        printf "`which ${pkgs-n00b-stable-bugged.openssh}/bin/ssh`"
+        printf "\n\n"
+        printf "pkgs-n00b-stable-μεγαold: \n"
+        printf "`${pkgs-n00b-stable-megaold.openssh}/bin/ssh -V`"
+        printf "`which ${pkgs-n00b-stable-megaold.openssh}/bin/ssh`"
+      '';
     };
+
 }
