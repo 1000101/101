@@ -2,9 +2,15 @@
 
 This is a template example of automatic deployment through [Colmena](https://github.com/zhaofengli/colmena).
 
-## Running
+## How to
 
-You can use colmena for the whole hive or machine by machine using `--on`.
+You can use [Colmena](https://github.com/zhaofengli/colmena) for the whole hive or machine by machine using `--on`.
+
+If you are using nix / NixOS you can get into env with latest Colmena available simply by running:
+
+```
+nix develop
+```
 
 ### Build
 

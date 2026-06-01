@@ -25,8 +25,10 @@
       ...
     }@inputs:
     let
+      system = "x86_64-linux";
+
       pkgs-unstable = import nixpkgs-unstable {
-        system = "x86_64-linux";
+        system = "${system}";
         config.allowUnfree = true;
       };
 
@@ -84,6 +86,19 @@
           };
 
       };
+
+      devShells.${system}.default =
+
+        pkgs-unstable.mkShell {
+
+          packages = [
+            colmena.packages.${system}.colmena
+          ];
+
+          shellHook = ''
+            printf " `${colmena.packages.${system}.colmena}/bin/colmena --version`"
+          '';
+        };
 
     };
 }
